@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biblioteca Escolar</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <link rel='stylesheet' href="{{ url_for('static', filename='css/consultarapida.css') }}">
+    <link rel='stylesheet' href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- NAVBAR -->
+
+        <nav class="navbar">
+
+            <div class="logo">
+
+                <div class="logo-icon">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+
+                <div>
+                    <h1>Biblioteca <span>Escolar</span></h1>
+                    <small>Conhecimento que transforma</small>
+                </div>
+
+            </div>
+
+            <div class="menu">
+
+                <a href="{{ url_for('index') }}">Início</a>
+                <a href="{{ url_for('consultarapida') }}">Acervo</a>
+
+                {% if session.get('user_id') %}
+                    <a href="{{ url_for('dashboard') }}" class="account-btn" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+                        <i class="fa-solid fa-circle-user"></i>
+                        {{ session.get('user_name') }}
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="account-btn" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; box-shadow: none;">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Sair
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Entrar</a>
+                    <a href="{{ url_for('cadastro') }}">Cadastrar-se</a>
+                    <a href="{{ url_for('login') }}" class="account-btn">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        Acessar minha conta
+                    </a>
+                {% endif %}
+
+            </div>
+
+        </nav>
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages" style="margin-bottom: 30px;">
+                {% for message in messages %}
+                    <div class="flash-message" style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 16px 20px; border-radius: 16px; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 12px; animation: slideDown 0.3s ease;">
+                        <i class="fa-solid fa-circle-info"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+            <style>
+                @keyframes slideDown {
+                    from { opacity: 0; transform: translateY(-10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+            </style>
+        {% endif %}
+        {% endwith %}
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+            <div class="hero-left">
+
+                <div class="badge">
+                    • ACERVO ATUALIZADO
+                </div>
+
+                <h2>
+                    Descubra histórias
+                    que <span>inspiram.</span>
+                </h2>
+
+                <p>
+                    Explore nosso acervo de livros cuidadosamente selecionados
+                    para aprender, imaginar e transformar.
+                </p>
+
+                <form class="search-box" method="GET" action="{{ url_for('consultarapida') }}">
+
+                    <input type="text" name="search" placeholder="Buscar livros, autores ou assuntos..." value="{{ search_query }}" />
+
+                    <button type="submit">
+                        Buscar
+                    </button>
+
+                </form>
+
+                <div class="stats">
+
+                    <div class="stat">
+                        <i class="fa-solid fa-book"></i>
+
+                        <div>
+                            <h3>2.400+</h3>
+                            <small>Títulos disponíveis</small>
+                        </div>
+                    </div>
+
+                    <div class="stat">
+                        <i class="fa-solid fa-users"></i>
+
+                        <div>
+                            <h3>128</h3>
+                            <small>Empréstimos ativos</small>
+                        </div>
+                    </div>
+
+                    <div class="stat">
+                        <i class="fa-solid fa-layer-group"></i>
+
+                        <div>
+                            <h3>35</h3>
+                            <small>Categorias</small>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- LIVROS -->
+
+        <section class="books-section">
+
+            <div class="section-header">
+
+                <h3>
+                    {% if search_query %}
+                        Resultados para "{{ search_query }}"
+                    {% else %}
+                        Livros em destaque
+                    {% endif %}
+                </h3>
+
+                <a href="{{ url_for('consultarapida') }}" class="view-btn" style="text-decoration: none;">
+                    Ver todos →
+                </a>
+
+            </div>
+
+            <div class="books-grid">
+
+                {% for book in books %}
+                <div class="book-card">
+
+                    <img class="book-cover" src="{{ book['capa_url'] }}" alt="{{ book['titulo'] }}">
+
+                    <h4>{{ book['titulo'] }}</h4>
+
+                    <div class="author">
+                        {{ book['autor'] }}
+                    </div>
+
+                    <div class="description">
+                        {{ book['descricao'] }}
+                    </div>
+
+                    <div class="rating">
+                        {% for i in range(5) %}
+                            {% if i < book['avaliacao']|int %}
+                                <i class="fa-solid fa-star"></i>
+                            {% elif i < book['avaliacao'] %}
+                                <i class="fa-solid fa-star-half-stroke"></i>
+                            {% else %}
+                                <i class="fa-regular fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                        <span style="margin-left: 8px; font-size: 0.9rem; color: #94a3b8;">{{ book['avaliacao'] }}</span>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                        {% if book['quantidade_disponivel'] > 0 %}
+                            <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #10b981; font-weight: 700; background: rgba(16, 185, 129, 0.12); padding: 4px 10px; border-radius: 99px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #10b981; display: inline-block;"></span>
+                                Disponível ({{ book['quantidade_disponivel'] }})
+                            </span>
+                        {% else %}
+                            <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.12); padding: 4px 10px; border-radius: 99px; border: 1px solid rgba(239, 68, 68, 0.2);">
+                                <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #ef4444; display: inline-block;"></span>
+                                Indisponível (Fila)
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
+                        <div class="category">
+                            {{ book['categoria'] }}
+                        </div>
+                        
+                        {% if book['quantidade_disponivel'] > 0 %}
+                            <form action="{{ url_for('emprestar', livro_id=book['id']) }}" method="POST" style="margin: 0;">
+                                <button type="submit" class="action-btn" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 8px 16px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); transition: 0.3s;">
+                                    <i class="fa-solid fa-book-bookmark"></i> Emprestar
+                                </button>
+                            </form>
+                        {% else %}
+                            <form action="{{ url_for('reservar', livro_id=book['id']) }}" method="POST" style="margin: 0;">
+                                <button type="submit" class="action-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 8px 16px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); transition: 0.3s;">
+                                    <i class="fa-solid fa-clock"></i> Reservar
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+
+                </div>
+                {% else %}
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; background: rgba(15, 23, 42, 0.5); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <i class="fa-solid fa-magnifying-glass" style="font-size: 3rem; color: #4b5563; margin-bottom: 20px;"></i>
+                    <p style="color: #9ca3af;">Nenhum livro encontrado para sua pesquisa.</p>
+                </div>
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        <!-- BOX FINAL -->
+
+        <div class="bottom-box">
+
+            <div class="bottom-left">
+
+                <div class="bottom-icon">
+                    <i class="fa-solid fa-book"></i>
+                </div>
+
+                <div>
+                    <h4>Faça parte da nossa biblioteca</h4>
+
+                    <p>
+                        {% if session.get('user_id') %}
+                            Você já está autenticado! Explore o acervo e aproveite os recursos exclusivos.
+                        {% else %}
+                            Crie sua conta e aproveite recursos exclusivos.
+                        {% endif %}
+                    </p>
+                </div>
+
+            </div>
+
+            {% if session.get('user_id') %}
+                <a href="{{ url_for('dashboard') }}" style="text-decoration: none;">
+                    <button class="bottom-btn" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        Ir para o Painel
+                    </button>
+                </a>
+            {% else %}
+                <a href="{{ url_for('login') }}" style="text-decoration: none;">
+                    <button class="bottom-btn">
+                        Acessar minha conta
+                    </button>
+                </a>
+            {% endif %}
+
+        </div>
+
+        <footer>
+            © 2026 ECIT Professor Lordão Biblioteca Escolar. Todos os direitos reservados.
+        </footer>
+
+    </div>
+
+</body>
+
+</html>

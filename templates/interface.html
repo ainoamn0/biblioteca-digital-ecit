@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Biblioteca Digital</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --blue-500: #2563eb;
+            --blue-600: #1d4ed8;
+            --blue-700: #1e40af;
+
+            --navy-950: #050816;
+            --navy-900: #0b1220;
+            --navy-800: #111c32;
+
+            --white: #ffffff;
+            --gray-100: #f1f5f9;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+
+            --glass-bg: rgba(15, 23, 42, 0.92);
+            --glass-border: rgba(148, 163, 184, 0.12);
+
+            --shadow-lg: 0 10px 35px rgba(0, 0, 0, 0.35);
+            --shadow-md: 0 4px 18px rgba(0, 0, 0, 0.2);
+
+            --radius-md: 18px;
+            --radius-pill: 999px;
+
+            --transition: 0.3s ease;
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.12), transparent 25%),
+                var(--navy-950);
+
+            font-family: 'Inter', sans-serif;
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .bg-photo {
+            display: none;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            background:
+                linear-gradient(to bottom,
+                    rgba(2, 6, 23, 0.85),
+                    rgba(2, 6, 23, 0.96));
+            z-index: 1;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 18px 42px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            background: rgba(11, 18, 32, 0.88);
+            border-bottom: 1px solid var(--glass-border);
+
+            backdrop-filter: blur(18px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: var(--white);
+        }
+
+        .logo img {
+            height: 44px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: 0.4px;
+        }
+
+        .user-nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 8px 14px;
+            border-radius: var(--radius-pill);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+
+            background: linear-gradient(135deg,
+                    var(--blue-500),
+                    var(--blue-700));
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-weight: 700;
+            font-size: 15px;
+
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.35);
+        }
+
+        .user-info span {
+            font-size: 14px;
+            color: var(--gray-300);
+        }
+
+        .user-info strong {
+            color: var(--white);
+        }
+
+        .logout-btn {
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            color: #ef4444;
+            transform: translateY(-1px);
+        }
+
+        main {
+            position: relative;
+            z-index: 10;
+            flex: 1;
+
+            width: 100%;
+            max-width: 1400px;
+
+            margin: 0 auto;
+            padding: 50px 40px 70px;
+        }
+
+        .welcome-section {
+            margin-bottom: 42px;
+        }
+
+        .welcome-section h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 38px;
+            font-weight: 800;
+            line-height: 1.1;
+
+            margin-bottom: 14px;
+
+            background: linear-gradient(to right,
+                    #ffffff,
+                    #cbd5e1);
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-section p {
+            max-width: 700px;
+            color: var(--gray-400);
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 26px;
+        }
+
+        .card {
+            position: relative;
+
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+
+            backdrop-filter: blur(20px);
+
+            border-radius: var(--radius-md);
+            padding: 28px;
+            cursor: pointer;
+            overflow: hidden;
+
+            transition:
+                transform var(--transition),
+                border-color var(--transition),
+                box-shadow var(--transition);
+        }
+
+        .card::before {
+            content: "";
+
+            position: absolute;
+            inset: 0;
+
+            background:
+                linear-gradient(135deg,
+                    rgba(37, 99, 235, 0.08),
+                    transparent 45%);
+
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+
+            border-color: rgba(59, 130, 246, 0.3);
+
+            box-shadow:
+                0 18px 40px rgba(0, 0, 0, 0.35),
+                0 0 20px rgba(37, 99, 235, 0.08);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 18px;
+
+            background:
+                linear-gradient(135deg,
+                    rgba(37, 99, 235, 0.18),
+                    rgba(37, 99, 235, 0.08));
+
+            color: var(--blue-500);
+            font-size: 24px;
+
+            margin-bottom: 22px;
+
+            border: 1px solid rgba(59, 130, 246, 0.15);
+        }
+
+        .card h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 21px;
+            font-weight: 700;
+
+            margin-bottom: 12px;
+
+            color: var(--gray-100);
+        }
+
+        .card p {
+            color: var(--gray-400);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-top: 22px;
+            padding: 12px 22px;
+
+            border-radius: var(--radius-pill);
+
+            background:
+                linear-gradient(135deg,
+                    var(--blue-500),
+                    var(--blue-700));
+
+            color: var(--white);
+
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+
+            box-shadow:
+                0 10px 20px rgba(37, 99, 235, 0.25);
+
+            transition:
+                transform var(--transition),
+                box-shadow var(--transition),
+                filter var(--transition);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+
+            filter: brightness(1.05);
+
+            box-shadow:
+                0 14px 28px rgba(37, 99, 235, 0.35);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 18px;
+                padding: 20px;
+            }
+
+            .user-nav {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            main {
+                padding: 35px 20px 60px;
+            }
+
+            .welcome-section h1 {
+                font-size: 30px;
+            }
+
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Styles for lists/tables */
+    .details-section {
+        display: none;
+        margin-top: 40px;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-md);
+        padding: 30px;
+        backdrop-filter: blur(20px);
+        animation: fadeIn 0.4s ease;
+    }
+
+    .details-section.active {
+        display: block;
+    }
+
+    .details-section h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 24px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--glass-border);
+        padding-bottom: 15px;
+    }
+
+    .item-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .item-card {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 16px;
+    }
+
+    .item-card img {
+        width: 60px;
+        height: 85px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .item-info {
+        flex: 1;
+    }
+
+    .item-info h4 {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .item-info p {
+        color: var(--gray-400);
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-ativo { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-atrasado { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .status-aguardando { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .status-pendente { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .status-devolucao_pendente { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+</head>
+
+<body>
+    <div class="bg-photo"></div>
+    <div class="bg-overlay"></div>
+
+    <header>
+        <a href="/" class="logo">
+            <img src="{{ url_for('static', filename='img/logoecit.png') }}" alt="Logo">
+            <span class="logo-text">Biblioteca Digital</span>
+        </a>
+
+        <div class="user-nav">
+            <div class="user-info">
+                <div class="user-avatar">{{ user_name[0] | upper if user_name else 'U' }}</div>
+                <span>Olá, <strong>{{ user_name }}</strong></span>
+            </div>
+            <a href="{{ url_for('logout') }}" class="logout-btn">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
+            </a>
+        </div>
+    </header>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="flash-messages" style="max-width: 1400px; margin: 20px auto 0; padding: 0 40px; width: 100%;">
+            {% for message in messages %}
+                <div class="flash-message" style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 16px 20px; border-radius: 16px; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 12px; animation: slideDown 0.3s ease; margin-bottom: 15px;">
+                    <i class="fa-solid fa-circle-info"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        <style>
+            @keyframes slideDown {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        </style>
+    {% endif %}
+    {% endwith %}
+
+    <main>
+        <section class="welcome-section">
+            <h1>Bem-vindo ao seu painel</h1>
+            <p>Aqui você pode gerenciar suas leituras, reservas e explorar o acervo.</p>
+        </section>
+
+        <!-- Avisos de Reservas Disponíveis -->
+        {% for res in reservas %}
+            {% if res['status'] == 'disponivel' %}
+                <div class="reservation-alert" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15)); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: var(--radius-md); padding: 22px 28px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; gap: 20px; backdrop-filter: blur(10px); animation: pulseAlert 2s infinite alternate;">
+                    <div style="display: flex; align-items: center; gap: 18px;">
+                        <div style="width: 50px; height: 50px; border-radius: 14px; background: rgba(16, 185, 129, 0.2); display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 20px;">
+                            <i class="fa-solid fa-bell"></i>
+                        </div>
+                        <div>
+                            <h4 style="font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 700; color: #10b981; margin-bottom: 4px; text-transform: none;">Livro disponível para você!</h4>
+                            <p style="color: var(--gray-300); font-size: 14px; line-height: 1.5;">O livro <strong>{{ res['titulo'] }}</strong> está reservado para você até <strong>{{ res['data_limite'] }}</strong>. Garanta o seu empréstimo agora!</p>
+                        </div>
+                    </div>
+                    <form action="{{ url_for('confirmar_reserva', reserva_id=res['id']) }}" method="POST" style="margin: 0; flex-shrink: 0;">
+                        <button type="submit" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px 24px; border-radius: var(--radius-pill); font-weight: 700; cursor: pointer; font-size: 13px; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3); transition: 0.3s; display: flex; align-items: center; gap: 8px;">
+                            Emprestar Agora <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        {% endfor %}
+        <style>
+            @keyframes pulseAlert {
+                from { box-shadow: 0 0 10px rgba(16, 185, 129, 0.1); }
+                to { box-shadow: 0 0 25px rgba(16, 185, 129, 0.3); border-color: rgba(16, 185, 129, 0.55); }
+            }
+        </style>
+
+        <div class="dashboard-grid">
+            <div class="card" onclick="window.location.href='{{ url_for('consultarapida') }}'" style="cursor: pointer;">
+                <div class="card-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                <h3>Explorar Acervo</h3>
+                <p>Pesquise por livros, autores ou categorias em nossa biblioteca completa.</p>
+                <a href="{{ url_for('consultarapida') }}" class="btn">Consultar</a>
+            </div>
+
+            <div class="card" onclick="toggleSection('reservas-section')">
+                <div class="card-icon"><i class="fa-solid fa-bookmark"></i></div>
+                <h3>Minhas Reservas</h3>
+                <p>Veja o status dos livros que você reservou recentemente.</p>
+                <a href="javascript:void(0)" class="btn">Ver Reservas</a>
+            </div>
+
+            <div class="card" onclick="toggleSection('emprestimos-section')">
+                <div class="card-icon"><i class="fa-solid fa-book"></i></div>
+                <h3>Empréstimos</h3>
+                <p>Acompanhe os prazos de devolução de seus empréstimos ativos.</p>
+                <a href="javascript:void(0)" class="btn">Meus Livros</a>
+            </div>
+        </div>
+
+        <!-- Secao de Emprestimos -->
+        <section id="emprestimos-section" class="details-section">
+            <h2><i class="fa-solid fa-book-open-reader"></i> Meus Empréstimos Ativos</h2>
+            <div class="item-list">
+                {% if emprestimos %}
+                    {% for emp in emprestimos %}
+                    <div class="item-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <img src="{{ emp['capa_url'] }}" alt="{{ emp['titulo'] }}">
+                            <div class="item-info">
+                                <h4>{{ emp['titulo'] }}</h4>
+                                <p>{{ emp['autor'] }}</p>
+                                <p style="font-size: 13px;">
+                                    {% if emp['status'] == 'pendente' %}
+                                        <i class="fa-solid fa-calendar"></i> Solicitado em: {{ emp['data_emprestimo'] }}<br>
+                                        <span style="color: #f59e0b;"><i class="fa-solid fa-circle-exclamation"></i> Vá à biblioteca retirar este livro.</span>
+                                    {% else %}
+                                        <i class="fa-solid fa-calendar"></i> Empréstimo: {{ emp['data_emprestimo'] }} <br>
+                                        <i class="fa-solid fa-clock"></i> Devolução prevista: {{ emp['data_devolucao_prevista'] }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+                            <div class="status-badge status-{{ emp['status'] }}">
+                                {% if emp['status'] == 'pendente' %}
+                                    Aguardando Retirada
+                                {% elif emp['status'] == 'devolucao_pendente' %}
+                                    Aguardando Devolução
+                                {% else %}
+                                    Emprestado
+                                {% endif %}
+                            </div>
+                            {% if emp['status'] == 'ativo' %}
+                                <form action="{{ url_for('devolver', emprestimo_id=emp['id']) }}" method="POST" style="margin: 0;">
+                                    <button type="submit" class="btn-devolver" style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 8px 16px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 12px; transition: 0.3s;">
+                                        Devolver Livro
+                                    </button>
+                                </form>
+                            {% elif emp['status'] == 'devolucao_pendente' %}
+                                <button disabled style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--gray-400); padding: 8px 16px; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: not-allowed;">
+                                    Aguardando Confirmação
+                                </button>
+                            {% else %}
+                                <button disabled style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 8px 16px; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: not-allowed;">
+                                    Liberar na Biblioteca
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--gray-400);">Você não possui empréstimos ativos no momento.</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Secao de Reservas -->
+        <section id="reservas-section" class="details-section">
+            <h2><i class="fa-solid fa-bookmark"></i> Minhas Reservas</h2>
+            <div class="item-list">
+                {% if reservas %}
+                    {% for res in reservas %}
+                    <div class="item-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <img src="{{ res['capa_url'] }}" alt="{{ res['titulo'] }}">
+                            <div class="item-info">
+                                <h4>{{ res['titulo'] }}</h4>
+                                <p>{{ res['autor'] }}</p>
+                                {% if res['status'] == 'aguardando' %}
+                                    <p style="font-size: 13px; color: #f59e0b;">
+                                        <i class="fa-solid fa-users"></i> Posição na Fila: <strong>{{ res['posicao'] }}º</strong> <br>
+                                        <i class="fa-solid fa-calendar-plus"></i> Reservado em: {{ res['data_reserva'] }}
+                                    </p>
+                                {% elif res['status'] == 'disponivel' %}
+                                    <p style="font-size: 13px; color: #10b981;">
+                                        <i class="fa-solid fa-clock"></i> Limite para retirada: <strong>{{ res['data_limite'] }}</strong>
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+                            <div class="status-badge status-{{ res['status'] }}">
+                                {{ res['status'] }}
+                            </div>
+                            {% if res['status'] == 'disponivel' %}
+                                <form action="{{ url_for('confirmar_reserva', reserva_id=res['id']) }}" method="POST" style="margin: 0;">
+                                    <button type="submit" class="btn-emprestar-reserva" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 8px 16px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 12px; transition: 0.3s; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25);">
+                                        Confirmar Empréstimo
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--gray-400);">Você não possui reservas ativas no momento.</p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function toggleSection(sectionId) {
+            // Esconder todas as secoes
+            document.querySelectorAll('.details-section').forEach(sec => {
+                if(sec.id !== sectionId) {
+                    sec.classList.remove('active');
+                }
+            });
+            // Alternar a secao clicada
+            const section = document.getElementById(sectionId);
+            section.classList.toggle('active');
+            
+            // Rolar suavemente para a secao
+            if(section.classList.contains('active')){
+                setTimeout(() => {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+    </script>
+</body>
+</html>

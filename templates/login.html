@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Biblioteca Digital Escola Estadual</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --blue-500: #3b82f6;
+            --blue-600: #2563eb;
+            --navy-950: #020917;
+            --white: #ffffff;
+            --gray-400: #94a3b8;
+            --glass-bg: rgba(15, 30, 60, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --radius-lg: 24px;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --accent-green: #10b981;
+            --accent-yellow: #facc15;
+            --accent-red: #ef4444;
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--navy-950);
+            font-family: 'Inter', sans-serif;
+            color: var(--white);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .bg-photo {
+            display: none;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--navy-950);
+            z-index: 1;
+        }
+
+        .page-wrapper {
+            position: relative;
+            z-index: 10;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            margin-bottom: 30px;
+        }
+
+        .logo-img {
+            height: 60px;
+            width: auto;
+        }
+
+        .logo-text .school-name {
+            display: block;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-400);
+        }
+
+        .logo-text .lib-name {
+            display: block;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--white);
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 450px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-accent-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--blue-500), var(--accent-green), var(--accent-yellow), var(--accent-red));
+        }
+
+        .login-card h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .login-card p {
+            color: var(--gray-400);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--accent-red);
+            color: #ffcccc;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--accent-green);
+            color: #ccffcc;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--blue-500);
+        }
+
+        .input-control {
+            width: 100%;
+            padding: 14px 14px 14px 48px;
+            background: rgba(2, 9, 23, 0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            transition: all var(--transition);
+        }
+
+        .input-control:focus {
+            outline: none;
+            border-color: var(--blue-500);
+            background: rgba(2, 9, 23, 0.8);
+        }
+
+        .btn-entrar {
+            width: 100%;
+            padding: 16px;
+            margin-top: 10px;
+            background: var(--blue-500);
+            color: white;
+            border: none;
+            border-radius: 100px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-entrar:hover {
+            background: var(--blue-600);
+            transform: translateY(-2px);
+        }
+
+        .login-footer {
+            margin-top: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .login-footer a {
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.2s;
+        }
+
+        .login-footer a:hover {
+            color: var(--white);
+        }
+
+        .back-link {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 20;
+        }
+
+        .user-type-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .user-type-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .user-type-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .user-type-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+            background: rgba(2, 9, 23, 0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all var(--transition);
+            color: var(--gray-400);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .user-type-label i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .user-type-option input:checked + .user-type-label {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: var(--blue-500);
+            color: var(--white);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-photo"></div>
+    <div class="bg-overlay"></div>
+
+    <a href="{{ url_for('index') }}" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i> Voltar ao início
+    </a>
+
+    <div class="page-wrapper">
+        <div class="login-logo">
+            <img src="{{ url_for('static', filename='img/logoecit.png') }}" alt="Logo" class="logo-img">
+            <div class="logo-text">
+                <span class="school-name">Escola Estadual</span>
+                <span class="lib-name">Biblioteca Digital</span>
+            </div>
+        </div>
+
+        <div class="login-card">
+            <div class="card-accent-line"></div>
+
+            <h2>Olá, bem-vindo!</h2>
+            <p>Identifique-se para acessar o acervo e suas reservas.</p>
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <form id="loginForm" method="POST" action="{{ url_for('login') }}">
+                <div class="user-type-group">
+                    <div class="user-type-option">
+                        <input type="radio" id="type-aluno" name="user_type" value="aluno" checked>
+                        <label for="type-aluno" class="user-type-label">
+                            <i class="fa-solid fa-user-graduate"></i>
+                            Aluno
+                        </label>
+                    </div>
+                    <div class="user-type-option">
+                        <input type="radio" id="type-admin" name="user_type" value="admin">
+                        <label for="type-admin" class="user-type-label">
+                            <i class="fa-solid fa-user-tie"></i>
+                            Administrador
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="email-group">
+                    <label>E-mail</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="text" name="email" id="email-input" class="input-control" placeholder="exemplo@email.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Sua Senha</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" name="senha" class="input-control" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-entrar">
+                    Entrar no Sistema
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <a href="{{ url_for('cadastro') }}">Não tem conta? Cadastre-se</a>
+                <a href="#">Esqueceu a senha?</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const radioAluno = document.getElementById('type-aluno');
+        const radioAdmin = document.getElementById('type-admin');
+        const emailGroup = document.getElementById('email-group');
+        const emailLabel = emailGroup.querySelector('label');
+        const emailInput = document.getElementById('email-input');
+        const emailIcon = emailGroup.querySelector('.input-wrapper i');
+
+        function toggleInputs() {
+            if (radioAdmin.checked) {
+                emailLabel.textContent = 'E-mail ou CPF do Administrador';
+                emailInput.placeholder = 'exemplo@email.com ou 000.000.000-00';
+                emailIcon.className = 'fa-solid fa-address-card';
+            } else {
+                emailLabel.textContent = 'E-mail';
+                emailInput.placeholder = 'exemplo@email.com';
+                emailIcon.className = 'fa-solid fa-envelope';
+            }
+        }
+
+        radioAluno.addEventListener('change', toggleInputs);
+        radioAdmin.addEventListener('change', toggleInputs);
+        
+        emailInput.addEventListener('input', function (e) {
+            if (radioAdmin.checked) {
+                let value = e.target.value;
+                if (/^\d/.test(value.replace(/\s/g, ''))) {
+                    let digits = value.replace(/\D/g, '');
+                    if (digits.length > 11) digits = digits.slice(0, 11);
+                    
+                    if (digits.length > 9) {
+                        digits = digits.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
+                    } else if (digits.length > 6) {
+                        digits = digits.replace(/^(\d{3})(\d{3})(\d{1,3})$/, "$1.$2.$3");
+                    } else if (digits.length > 3) {
+                        digits = digits.replace(/^(\d{3})(\d{1,3})$/, "$1.$2");
+                    }
+                    e.target.value = digits;
+                }
+            }
+        });
+
+        document.getElementById('loginForm').onsubmit = function (e) {
+            const btn = document.querySelector('.btn-entrar');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Validando acesso...';
+        };
+    </script>
+</body>
+
+</html>

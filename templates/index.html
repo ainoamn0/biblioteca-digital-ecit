@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Escolar — Portal Digital</title>
+    <meta name="description"
+        content="Sistema integrado de gerenciamento de acervo escolar. Consulte, reserve e gerencie livros de forma moderna e intuitiva.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel='stylesheet' href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel='stylesheet' href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- Background -->
+    <div class="bg-photo"></div>
+    <div class="bg-gradient"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- ================================================
+             HEADER
+        ================================================ -->
+        <header>
+            <a href="/" class="nav-logo">
+                <img src="logoecit.png" alt="Logo da Escola" class="logo-img">
+                <div class="nav-divider"></div>
+                <div class="logo-text">
+                    <span class="school-name">Escola Estadual</span>
+                    <span class="lib-name">Biblioteca Digital</span>
+                </div>
+            </a>
+
+            <nav class="nav-actions">
+                <a href="{{ url_for('index') }}" class="nav-link"><i class="fa-solid fa-house"></i> Início</a>
+                <a href="{{ url_for('consultarapida') }}" class="nav-link"><i class="fa-solid fa-books"></i> Acervo</a>
+
+                {% if session.get('user_id') %}
+                {% if session.get('is_admin') %}
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-link">
+                    <i class="fa-solid fa-user-tie"></i>
+                    {{ session.get('user_name') }} (Admin)
+                </a>
+                {% else %}
+                <a href="{{ url_for('dashboard') }}" class="nav-link">
+                    <i class="fa-solid fa-circle-user"></i>
+                    {{ session.get('user_name') }}
+                </a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}" class="btn btn-ghost"
+                    style="color: #f87171; border: 1px solid rgba(248, 113, 113, 0.2);">
+                    <i class="fa-solid fa-right-from-bracket"></i> Sair
+                </a>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="nav-link">Entrar</a>
+                <a href="{{ url_for('cadastro') }}" class="nav-link">Cadastrar-se</a>
+                <a href="{{ url_for('login') }}" class="btn btn-primary" id="btn-acesso">
+                    <i class="fa-solid fa-right-to-bracket"></i> Acessar minha conta
+                </a>
+                {% endif %}
+
+                <button class="hamburger-btn" onclick="openMenu()" aria-label="Abrir menu">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+            </nav>
+        </header>
+
+        <!-- ================================================
+             HERO
+        ================================================ -->
+        <main>
+            <div class="hero-left">
+
+                <div class="badge-pill">
+                    <div class="dot"></div>
+                    Sistema Integrado de Biblioteca
+                </div>
+
+                <h1 class="hero-title">
+                    Sua biblioteca,<br>
+                    <span class="accent">simplificada.</span>
+                </h1>
+
+                <div class="hero-divider"></div>
+
+                <p class="hero-desc">
+                    Gerencie o acervo completo da biblioteca com facilidade. Controle empréstimos, consulte títulos
+                    disponíveis e acompanhe devoluções — tudo em um só lugar, moderno e intuitivo.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="{{ url_for('consultarapida') }}" class="btn btn-primary btn-hero-primary">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        Explorar Acervo
+                    </a>
+
+                    {% if not session.get('user_id') %}
+                    <a href="{{ url_for('cadastro') }}" class="btn btn-ghost btn-hero-ghost">
+                        Criar Conta
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    {% else %}
+                    {% if session.get('is_admin') %}
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-ghost btn-hero-ghost">
+                        Ver Painel Admin
+                        <i class="fa-solid fa-gauge-high"></i>
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-ghost btn-hero-ghost">
+                        Ver Meu Painel
+                        <i class="fa-solid fa-gauge-high"></i>
+                    </a>
+                    {% endif %}
+                    {% endif %}
+                </div>
+
+                <div class="trust-row">
+                    <div class="avatar-stack">
+                        <div class="av">LA</div>
+                        <div class="av">MS</div>
+                        <div class="av">RF</div>
+                        <div class="av">+</div>
+                    </div>
+                    <p class="trust-text">Usado por <strong>+840 alunos</strong> e professores</p>
+                </div>
+
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="hero-right">
+
+                <div class="stat-card" onclick="window.location.href='{{ url_for('consultarapida') }}'" style="cursor: pointer;">
+                    <div class="stat-icon"><i class="fa-solid fa-book-open"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value" data-count="2400">0</div>
+                        <div class="stat-label">Títulos no acervo</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-rotate"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value" data-count="128">0</div>
+                        <div class="stat-label">Empréstimos ativos</div>
+                    </div>
+                </div>
+
+                <div class="stat-card hours-card">
+                    <div class="stat-icon"><i class="fa-regular fa-clock"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value" style="font-size: 1.3rem;">08h–18h</div>
+                        <div class="stat-label">Segunda a Sexta</div>
+                    </div>
+                    <div class="online-badge">
+                        <div class="dot"></div> Online
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value" data-count="98">0</div>
+                        <div class="stat-label">% de satisfação</div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- ================================================
+             FEATURES STRIP
+        ================================================ -->
+        <div class="features-strip">
+            <div class="features-grid">
+                <a href="{{ url_for('consultarapida') }}" style="text-decoration: none; color: inherit;">
+                    <div class="feature-chip">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>Consulta rápida ao acervo</span>
+                    </div>
+                </a>
+                <div class="feature-chip">
+                    <i class="fa-solid fa-bookmark"></i>
+                    <span>Reserva online de livros</span>
+                </div>
+                <div class="feature-chip">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>Alertas de devolução</span>
+                </div>
+                <div class="feature-chip">
+                    <i class="fa-solid fa-star"></i>
+                    <span>Feedbacks e avaliações</span>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /page-wrapper -->
+
+    <!-- ================================================
+         SIDEBAR OVERLAY
+    ================================================ -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeMenu()"></div>
+
+    <!-- ================================================
+         SIDEBAR / DRAWER
+    ================================================ -->
+    <nav class="sidebar" id="sidebar" aria-label="Menu lateral">
+
+        <div class="sidebar-header">
+            <div>
+                <div class="sidebar-title">Menu</div>
+                <div class="sidebar-subtitle">Biblioteca Digital</div>
+            </div>
+            <button class="close-btn" onclick="closeMenu()" aria-label="Fechar menu">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-body">
+            <p class="menu-section-label">Principal</p>
+            <ul class="menu-list">
+                <li>
+                    <a href="#" class="active">
+                        <div class="menu-icon"><i class="fa-solid fa-house"></i></div>
+                        Início
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('consultarapida') }}">
+                        <div class="menu-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        Consultar Acervo
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <div class="menu-icon"><i class="fa-solid fa-bookmark"></i></div>
+                        Minhas Reservas
+                        <span class="menu-badge">3</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <div class="menu-icon"><i class="fa-solid fa-rotate"></i></div>
+                        Empréstimos Ativos
+                    </a>
+                </li>
+            </ul>
+
+            <p class="menu-section-label">Descobrir</p>
+            <ul class="menu-list">
+                <li>
+                    <a href="#">
+                        <div class="menu-icon"><i class="fa-solid fa-fire"></i></div>
+                        Mais Populares
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <div class="menu-icon"><i class="fa-solid fa-star"></i></div>
+                        Avaliações e Feedbacks
+                    </a>
+                </li>
+            </ul>
+
+            <p class="menu-section-label">Ajuda</p>
+            <ul class="menu-list">
+                <li>
+                    <a href="{{ url_for('suporte') }}">
+                        <div class="menu-icon"><i class="fa-solid fa-circle-question"></i></div>
+                        Regras e FAQ
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('suporte') }}">
+                        <div class="menu-icon"><i class="fa-solid fa-envelope"></i></div>
+                        Falar com Bibliotecário
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-card">
+                {% if session.get('user_id') %}
+                {% if session.get('is_admin') %}
+                <a href="{{ url_for('admin_dashboard') }}"
+                    style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                {% else %}
+                <a href="{{ url_for('dashboard') }}"
+                    style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                {% endif %}
+                    <div class="user-avatar" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        {{ session.get('user_name')[0]|upper if session.get('user_name') else 'U' }}
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name">{{ session.get('user_name') }}</div>
+                        <div class="user-role">Autenticado</div>
+                    </div>
+                </a>
+                <div class="user-actions">
+                    {% if session.get('is_admin') %}
+                    <button class="icon-btn" title="Painel Admin"
+                        onclick="window.location.href='{{ url_for('admin_dashboard') }}'"><i
+                            class="fa-solid fa-gauge-high"></i></button>
+                    {% else %}
+                    <button class="icon-btn" title="Painel"
+                        onclick="window.location.href='{{ url_for('dashboard') }}'"><i
+                            class="fa-solid fa-gauge-high"></i></button>
+                    {% endif %}
+                    <button class="icon-btn" title="Sair" onclick="window.location.href='{{ url_for('logout') }}'"><i
+                            class="fa-solid fa-right-from-bracket"></i></button>
+                </div>
+                {% else %}
+                <a href="{{ url_for('login') }}"
+                    style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                    <div class="user-avatar">AL</div>
+                    <div class="user-info">
+                        <div class="user-name">Aluno</div>
+                        <div class="user-role">Não autenticado</div>
+                    </div>
+                </a>
+                <div class="user-actions">
+                    <button class="icon-btn" title="Login" onclick="window.location.href='{{ url_for('login') }}'"><i
+                            class="fa-solid fa-right-to-bracket"></i></button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </nav>
+
+    <!-- ================================================
+         SCRIPTS
+    ================================================ -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>

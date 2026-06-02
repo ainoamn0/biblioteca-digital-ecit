@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suporte — Biblioteca Digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --blue-500: #3b82f6;
+            --blue-600: #2563eb;
+            --navy-950: #020917;
+            --navy-900: #0b1426;
+            --white: #ffffff;
+            --gray-400: #94a3b8;
+            --glass-bg: rgba(15, 30, 60, 0.55);
+            --glass-border: rgba(255, 255, 255, 0.07);
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--navy-950);
+            font-family: 'Inter', sans-serif;
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent),
+                        radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.05), transparent);
+            z-index: 1;
+        }
+
+        header {
+            position: relative;
+            z-index: 10;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo img { height: 40px; }
+        .logo-text { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 18px; }
+
+        .back-link {
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: white; }
+
+        main {
+            position: relative;
+            z-index: 10;
+            flex: 1;
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .support-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .support-header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 40px;
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, var(--gray-400) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .support-header p {
+            color: var(--gray-400);
+            font-size: 18px;
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 40px;
+        }
+
+        .info-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 25px;
+            border-radius: var(--radius-md);
+            display: flex;
+            gap: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .info-card:hover { transform: translateX(5px); }
+
+        .info-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue-500);
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .info-content h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .info-content p {
+            color: var(--gray-400);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .contact-form-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(20px);
+        }
+
+        .contact-form-card h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            margin-bottom: 25px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .input-control {
+            width: 100%;
+            padding: 14px;
+            background: rgba(2, 9, 23, 0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            transition: all var(--transition);
+        }
+
+        .input-control:focus {
+            outline: none;
+            border-color: var(--blue-500);
+            background: rgba(2, 9, 23, 0.8);
+        }
+
+        textarea.input-control {
+            resize: none;
+            height: 150px;
+        }
+
+        .btn-send {
+            width: 100%;
+            padding: 16px;
+            background: var(--blue-500);
+            color: white;
+            border: none;
+            border-radius: 100px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-send:hover {
+            background: var(--blue-600);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        @media (max-width: 850px) {
+            .support-grid { grid-template-columns: 1fr; }
+            main { padding: 40px 20px; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-overlay"></div>
+
+    <header>
+        <a href="{{ url_for('index') }}" class="logo">
+            <img src="{{ url_for('static', filename='img/logoecit.png') }}" alt="Logo">
+            <span class="logo-text">Biblioteca Digital</span>
+        </a>
+        <a href="{{ url_for('index') }}" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Voltar ao Início
+        </a>
+    </header>
+
+    <main>
+        <div class="support-header">
+            <h1>Como podemos ajudar?</h1>
+            <p>Nossa central de atendimento está pronta para resolver suas dúvidas.</p>
+        </div>
+
+        <div class="support-grid">
+            <div class="info-cards">
+                <div class="info-card">
+                    <div class="info-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div class="info-content">
+                        <h3>E-mail Direto</h3>
+                        <p>suporte@bibliotecadigital.com<br>Resposta em até 24h úteis.</p>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon"><i class="fa-solid fa-phone"></i></div>
+                    <div class="info-content">
+                        <h3>Telefone</h3>
+                        <p>(83) 3333-4444<br>Segunda a sexta, 08h às 18h.</p>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
+                    <div class="info-content">
+                        <h3>Localização</h3>
+                        <p>ECIT Professor Lordão<br>Setor de Biblioteca, Bloco A.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form-card">
+                <h2>Envie uma mensagem</h2>
+                <form action="#" method="POST">
+                    <div class="form-group">
+                        <label>Seu Nome</label>
+                        <input type="text" class="input-control" placeholder="Digite seu nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Assunto</label>
+                        <select class="input-control" required style="appearance: none;">
+                            <option value="" disabled selected>Selecione um assunto</option>
+                            <option value="acesso">Problemas de Acesso</option>
+                            <option value="reserva">Dúvida sobre Reservas</option>
+                            <option value="doacao">Doação de Livros</option>
+                            <option value="outro">Outros Assuntos</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Mensagem</label>
+                        <textarea class="input-control" placeholder="Descreva seu problema ou dúvida em detalhes..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-send">
+                        Enviar Mensagem
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer style="position: relative; z-index: 10; padding: 40px; text-align: center; color: var(--gray-400); font-size: 14px; border-top: 1px solid var(--glass-border);">
+        © 2026 ECIT Professor Lordão. Central de Atendimento.
+    </footer>
+</body>
+
+</html>
